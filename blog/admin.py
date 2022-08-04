@@ -7,7 +7,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class PostAdmin(admin.ModelAdmin):
-    raw_id_fields = ("author", "likes", )
+    raw_id_fields = ("author", "likes",)
 
 
 admin.site.register(Post, PostAdmin)

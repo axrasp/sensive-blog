@@ -1,5 +1,4 @@
-from django.db.models import Count, Prefetch
-from django.http import Http404
+from django.db.models import Count
 from django.shortcuts import render
 from blog.models import Comment, Post, Tag
 
@@ -13,7 +12,7 @@ def serialize_post(post):
         "title": post.title,
         "teaser_text": post.text[:200],
         "author": post.author.username,
-        "comments_amount": len(Comment.objects.filter(post=post)),
+        "comments_amount": Comment.objects.filter(post=post).count(),
         "image_url": post.image.url if post.image else None,
         "published_at": post.published_at,
         "slug": post.slug,
@@ -69,7 +68,9 @@ def index(request):
         "most_popular_posts": [
             serialize_post_optimized(post) for post in most_popular_posts
         ],
-        "page_posts": [serialize_post_optimized(post) for post in most_fresh_posts],
+        "page_posts": [
+            serialize_post_optimized(post) for post in most_fresh_posts
+        ],
         "popular_tags": [
             serialize_tag(tag)
             for tag in most_popular_tags.annotate(
@@ -88,7 +89,9 @@ def post_detail(request, slug):
         .get(slug=slug)
     )
 
-    comments = Comment.objects.filter(post=post).select_related("author").all()
+    comments = (
+        Comment.objects.filter(post=post).select_related("author").all()
+    )
     serialized_comments = []
     for comment in comments:
         serialized_comments.append(
@@ -139,7 +142,6 @@ def post_detail(request, slug):
 
 def tag_filter(request, tag_title):
     tag = Tag.objects.get(title=tag_title)
-
     most_popular_tags = Tag.objects.popular()[:5]
 
     most_popular_posts = (
