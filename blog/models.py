@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Count
 from django.urls import reverse
 from django.contrib.auth.models import User
 
@@ -60,6 +59,7 @@ class Comment(models.Model):
     post = models.ForeignKey(
         'Post',
         on_delete=models.CASCADE,
+        related_name='comments',
         verbose_name='Пост, к которому написан')
     author = models.ForeignKey(
         User,
