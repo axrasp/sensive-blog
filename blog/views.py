@@ -67,8 +67,7 @@ def index(request):
 
     most_fresh_posts = list(fresh_posts)[-5:]
     tags = (
-        Tag.objects.annotate(num_posts=Count("posts"))
-            .order_by("-num_posts")
+        Tag.objects.popular()
     )
     most_popular_tags = tags[:5]
 
