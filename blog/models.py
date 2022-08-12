@@ -6,11 +6,11 @@ from django.contrib.auth.models import User
 
 class PostQuerySet(models.QuerySet):
 
-    def year(self, year):
+    def get_posts_by_year(self, year):
         posts_at_year = self.filter(published_at__year=year).order_by('published_at')
         return posts_at_year
 
-    def popular(self):
+    def get_popular_posts(self):
         popular_posts = self.annotate(likes_qty=Count("likes")).order_by("-likes_qty")
         return popular_posts
 
